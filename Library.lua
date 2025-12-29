@@ -682,12 +682,6 @@ function TDS:Addons(options)
     return false
 end
 
-if game_state == "GAME" then
-    if not TDS:Addons() then
-        game:GetService("Players").LocalPlayer:Kick("Failed to load addons.")
-    end
-end
-
 -- ingame
 function TDS:TeleportToLobby()
     send_to_lobby()
