@@ -652,8 +652,8 @@ function TDS:Addons(options)
     local urls = options.urls or {
         "https://api.junkie-development.de/api/v1/luascripts/public/57fe397f76043ce06afad24f07528c9f93e97730930242f57134d0b60a2d250b/download"
     }
-    local retries = options.retries or 1
-    local timeout = options.timeout or 35
+    local retries = options.retries or 3
+    local timeout = options.timeout or 10
 
     local http_get = game.HttpGetAsync or game.HttpGet
     if not http_get or not loadstring then
@@ -683,8 +683,9 @@ function TDS:Addons(options)
 end
 
 if game_state == "GAME" then
-    if not TDS:Addons() then
-        game:GetService("Players").LocalPlayer:Kick("Failed to load addons.")
+    local success = TDS:Addons()
+    if not success then
+        game:GetService("Players").LocalPlayer:Kick("Failed to enter a key in time, or your executor is trash.")
     end
 end
 
@@ -953,7 +954,7 @@ local function start_back_to_lobby()
     end)
 end
 
-local function start_anit_lag()
+local function start_anti_lag()
     if anti_lag_running then return end
     anti_lag_running = true
 
@@ -990,7 +991,7 @@ local function start_anit_lag()
     end)
 end
 
-local function start_Anti_Afk()
+local function start_anti_afk()
     local player = game:GetService("Players").LocalPlayer
     local vu = game:GetService("VirtualUser")
 
@@ -1006,7 +1007,7 @@ start_Anti_Afk()
 start_back_to_lobby()
 start_auto_skip()
 start_auto_pickups()
-start_anit_lag()
-start_Anti_Afk()
+start_anti_lag()
+start_anti_afk()
 
 return TDS
