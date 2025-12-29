@@ -761,6 +761,9 @@ function TDS:Place(t_name, px, py, pz)
     local start = os.clock()
 
     repeat
+        if identify_game_state() ~= "LOBBY" then
+            return false
+        end
         for _, tower in ipairs(workspace.Towers:GetChildren()) do
             if not existing[tower] then
                 local owner = tower:FindFirstChild("Owner")
