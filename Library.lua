@@ -268,6 +268,8 @@ local function handle_post_match()
         })
     end)
 
+    task.wait(1.5)
+
     send_to_lobby()
 end
 
