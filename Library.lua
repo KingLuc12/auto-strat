@@ -629,26 +629,35 @@ function TDS:Mode(difficulty)
 end
 
 function TDS:Loadout(...)
-    if game_state ~= "LOBBY" then 
-        return false 
+    if game_state ~= "LOBBY" then
+        return false
     end
 
     local lobby_hud = player_gui:WaitForChild("ReactLobbyHud", 30)
-    local frame = lobby_hud and lobby_hud:WaitForChild("Frame", 30)
-    local match_making = frame and frame:WaitForChild("matchmaking", 30)
+    local frame = lobby_hud:WaitForChild("Frame", 30)
+    frame:WaitForChild("matchmaking", 30)
 
-    if match_making then
-        local towers = {...}
-        local remote = game:GetService("ReplicatedStorage"):WaitForChild("RemoteFunction")
-        for _, tower_name in ipairs(towers) do
-            if tower_name and tower_name ~= "" then
-                pcall(function()
+    local towers = {...}
+    local remote = game:GetService("ReplicatedStorage"):WaitForChild("RemoteFunction")
+
+    for _, tower_name in ipairs(towers) do
+        if tower_name and tower_name ~= "" then
+            local success = false
+            repeat
+                local ok = pcall(function()
                     remote:InvokeServer("Inventory", "Equip", "tower", tower_name)
                 end)
-                task.wait(0.5)
-            end
+                if ok then
+                    success = true
+                else
+                    task.wait(0.2)
+                end
+            until success
+            task.wait(0.4)
         end
     end
+
+    return true
 end
 
 function TDS:Addons()
