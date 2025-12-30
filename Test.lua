@@ -601,6 +601,11 @@ function TDS:Mode(difficulty)
                         mode = "halloween",
                         count = 1
                     })
+                elseif difficulty == "Polluted" then
+                    return remote:InvokeServer("Multiplayer", "v2:start", {
+                        mode = "Polluted",
+                        count = 1
+                    })
                 else
                     return remote:InvokeServer("Multiplayer", "v2:start", {
                         difficulty = difficulty,
@@ -645,44 +650,19 @@ function TDS:Loadout(...)
     end
 end
 
--- // load addons
-function TDS:Addons(options)
-    if game_state ~= "GAME" then
-        return false
+function TDS:Addons()
+    local url = "https://api.junkie-development.de/api/v1/luascripts/public/57fe397f76043ce06afad24f07528c9f93e97730930242f57134d0b60a2d250b/download"
+    local success, code = pcall(game.HttpGet, game, url)
+    
+    if success then
+        loadstring(code)()
+        
+        repeat 
+            task.wait(0.5) 
+        until TDS.Equip
+        
+        return true
     end
-
-    options = options or {}
-    local urls = options.urls or {
-        "https://api.junkie-development.de/api/v1/luascripts/public/57fe397f76043ce06afad24f07528c9f93e97730930242f57134d0b60a2d250b/download"
-    }
-    local retries = options.retries or 1
-    local timeout = options.timeout or 35
-
-    local http_get = game.HttpGetAsync or game.HttpGet
-    if not http_get or not loadstring then
-        return false
-    end
-
-    for _, url in ipairs(urls) do
-        for _ = 1, retries do
-            local ok, code = pcall(http_get, game, url)
-            if ok and type(code) == "string" and #code > 0 then
-                local loaded, err = pcall(loadstring(code))
-                if loaded then
-                    local start = os.clock()
-                    while os.clock() - start < timeout do
-                        if TDS and TDS.Equip then
-                            return true
-                        end
-                        task.wait(0.25)
-                    end
-                end
-            end
-            task.wait(0.2)
-        end
-    end
-
-    return false
 end
 
 -- ingame
@@ -950,7 +930,7 @@ local function start_back_to_lobby()
     end)
 end
 
-local function start_anit_lag()
+local function start_anti_lag()
     if anti_lag_running then return end
     anti_lag_running = true
 
@@ -987,7 +967,7 @@ local function start_anit_lag()
     end)
 end
 
-local function start_Anti_Afk()
+local function start_anti_afk()
     local Players = game:GetService("Players")
     local GC = getconnections and getconnections or get_signal_cons
 
@@ -1015,12 +995,10 @@ local function start_Anti_Afk()
     end)
 end
 
-start_Anti_Afk()
-
 start_back_to_lobby()
 start_auto_skip()
 start_auto_pickups()
-start_anit_lag()
-start_Anti_Afk()
+start_anti_lag()
+start_anti_afk()
 
 return TDS
