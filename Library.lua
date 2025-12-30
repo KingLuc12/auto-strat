@@ -846,7 +846,7 @@ function TDS:AutoChain(...)
             local tower = TDS.placed_towers[idx]
 
             if tower then
-                do_activate_ability(tower, "Call to Arms")
+                do_activate_ability(tower, "Call Of Arms")
             end
 
             local hotbar = player_gui.ReactUniversalHotbar.Frame
